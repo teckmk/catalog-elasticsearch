@@ -13,7 +13,7 @@ import {
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
-const port = 3000;
+const port = process.env.SERVER_PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -51,7 +51,7 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
 			item.products.map(product => ({
 				...product,
 				aisleNumber: item.aisleNumber,
-				categories: [...product.categories, ...item.categories],
+				categories: [...product.categories],
 			}))
 		);
 
