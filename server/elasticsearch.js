@@ -57,7 +57,7 @@ export async function initializeElasticsearch() {
             tokenizer: {
               edge_ngram_tokenizer: {
                 type: "edge_ngram",
-                min_gram: 1,
+                min_gram: 2,
                 max_gram: 20,
                 token_chars: ["letter", "digit"],
               },
@@ -116,17 +116,33 @@ export async function searchProducts(query, page = 1, limit = 12) {
           should: [
             {
               match_phrase: {
-                name: {
+                "name.exact": {
                   query,
-                  boost: 5, // Exact match for product name
+                  boost: 10, // Higher priority for exact matches
                 },
               },
             },
             {
               match_phrase: {
-                categories: {
+                "categories.exact": {
                   query,
-                  boost: 4, // Exact match for categories
+                  boost: 8,
+                },
+              },
+            },
+            {
+              match: {
+                "name.autocomplete": {
+                  query,
+                  boost: 5, // Prioritize autocomplete matches
+                },
+              },
+            },
+            {
+              match: {
+                "categories.autocomplete": {
+                  query,
+                  boost: 4,
                 },
               },
             },
@@ -134,8 +150,8 @@ export async function searchProducts(query, page = 1, limit = 12) {
               multi_match: {
                 query,
                 fields: ["name^2", "categories"],
-                fuzziness: "AUTO", // Fuzzy search
-                boost: 1, // Lower boost for fuzzy matches
+                fuzziness: "AUTO", // Fuzzy search for fallback
+                boost: 1,
               },
             },
           ],
