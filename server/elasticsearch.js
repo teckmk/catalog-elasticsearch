@@ -17,6 +17,7 @@ export async function initializeElasticsearch() {
         mappings: {
           properties: {
             id: { type: "keyword" },
+            aisleNumber: { type: "keyword" },
             name: {
               type: "text",
               analyzer: "standard", // Default analyzer for basic tokenization
@@ -49,7 +50,6 @@ export async function initializeElasticsearch() {
                 },
               },
             },
-            aisleNumber: { type: "integer" },
           },
         },
         settings: {
